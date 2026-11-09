@@ -1,0 +1,19 @@
+/target/
+/.idea/
+*.iml
+.env
+*.jtl
+/reports/
+
+# Local output and files excluded from version control
+/temp/
+*.log
+*.sql
+bootstrap.yaml
+
+# Integration and performance tools are kept locally
+/perf/
+/scripts/test-integration.ps1
+/scripts/prepare-benchmark.ps1
+/scripts/run-jmeter-stage.ps1
+/src/test/java/com/campuspass/FlowIntegrationTest.java
