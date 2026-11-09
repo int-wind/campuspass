@@ -1,0 +1,88 @@
+server:
+  port: ${SERVER_PORT:8082}
+  shutdown: graceful
+spring:
+  application:
+    name: campuspass
+  datasource:
+    url: ${DB_URL:jdbc:mysql://127.0.0.1:3306/campuspass?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai}
+    username: ${DB_USER:campuspass}
+    password: ${DB_PASSWORD:campuspass-local-only}
+    hikari:
+      maximum-pool-size: ${DB_POOL_SIZE:50}
+      minimum-idle: 4
+      connection-timeout: 3000
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  redis:
+    host: ${REDIS_HOST:127.0.0.1}
+    port: ${REDIS_PORT:6379}
+    database: ${REDIS_DATABASE:0}
+    timeout: 2s
+    lettuce:
+      pool:
+        max-active: 64
+        max-idle: 16
+        min-idle: 4
+  rabbitmq:
+    host: ${RABBITMQ_HOST:127.0.0.1}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:campuspass}
+    password: ${RABBITMQ_PASSWORD:campuspass-local-only}
+    publisher-confirm-type: correlated
+    publisher-returns: true
+    template:
+      mandatory: true
+    listener:
+      simple:
+        acknowledge-mode: manual
+        prefetch: 16
+        default-requeue-rejected: false
+  security:
+    user:
+      name: disabled
+      password: disabled
+  jackson:
+    default-property-inclusion: non_null
+    time-zone: Asia/Shanghai
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      id-type: auto
+campuspass:
+  sentinel:
+    event-list-qps: ${SENTINEL_EVENT_LIST_QPS:200}
+    event-detail-qps: ${SENTINEL_EVENT_DETAIL_QPS:300}
+  auth:
+    access-ttl: 15m
+    refresh-ttl: 7d
+    jwt-secret: ${JWT_SECRET:local-dev-secret-change-me-please-0123456789}
+    bootstrap-admin:
+      username: ${BOOTSTRAP_ADMIN_USERNAME:}
+      password: ${BOOTSTRAP_ADMIN_PASSWORD:}
+  enrollment:
+    async: ${ENROLLMENT_ASYNC:true}
+    confirmation-ttl: 5m
+    check-in-early: 1h
+    check-in-late: 2h
+    reservation-lease: 30s
+  rate-limit:
+    login-account-per-minute: ${LOGIN_ACCOUNT_LIMIT:10}
+    login-ip-per-minute: ${LOGIN_IP_LIMIT:60}
+  cache:
+    event-detail-ttl: 90s
+    null-ttl: 10s
+    local-max-size: 10000
+    local-enabled: ${LOCAL_CACHE_ENABLED:true}
+  outbox-poll-ms: ${OUTBOX_POLL_MS:500}
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
